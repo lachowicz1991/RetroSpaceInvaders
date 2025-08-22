@@ -4,6 +4,7 @@ from settings import Settings
 from ship import Ship
 from bullet import Bullet
 from sfx import Sound_Manager
+from alien import Alien
 
 class SpaceInvaders:
     """Main class for the game"""
@@ -20,6 +21,8 @@ class SpaceInvaders:
         self.background = pygame.image.load(self.settings.bg_art).convert()
         self.ship = Ship(self)
         self.bullets = pygame.sprite.Group()
+        self.aliens = pygame.sprite.Group()
+        self._create_fleet()
         self.sfx = Sound_Manager(self)
 
     def run_game(self):
@@ -81,6 +84,18 @@ class SpaceInvaders:
             self.bullets.add(new_bullet)
             self.sfx.play_bullet_sound()
 
+    def _create_fleet(self):
+        """Creates hostile fleet"""
+        alien = Alien(self)
+        alien_width = alien.rect.width
+        avalible_space_x = self.settings.screen_width - (2 * alien_width)
+        number_alien_x = avalible_space_x // (2 * alien_width)
+        # Create the first row of aliens.
+        for alien_number in range(number_alien_x):
+            alien = Alien(self)
+            alien.x = alien_width + 2 * alien_width * alien_number
+            alien.rect.x = alien.x
+            self.aliens.add(alien)
 
     def _screen_update(self):
         """Updates the screen and flips to the new one"""
@@ -90,6 +105,8 @@ class SpaceInvaders:
         self.ship.blitme()
         for bullet in self.bullets.sprites():
             bullet.draw_bullet()
+
+        self.aliens.draw(self.screen)
         # Make the most recently drawn screen visible.
         pygame.display.flip()
 
