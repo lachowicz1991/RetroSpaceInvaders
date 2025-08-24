@@ -10,6 +10,7 @@ class Sound_Manager():
         self.main_theme = 'resources/audio/main.mp3'
         self.bullet_sound = 'resources/audio/shot.mp3'
         self.ship_sound = 'resources/audio/ship_sound.mp3'
+        self.explosion_sound = 'resources/audio/explosion.mp3'
 
     def play_bullet_sound(self):
         """ sound effect for the ship weapons"""
@@ -26,3 +27,7 @@ class Sound_Manager():
         """ sound effect for the ship engine """
         play_sound = pygame.mixer.Sound(self.ship_sound)
         play_sound.play(-1)
+
+    def play_explosion_sound(self):
+        explosion_sound = pygame.mixer.Sound(self.explosion_sound)
+        explosion_sound.play()

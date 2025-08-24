@@ -39,10 +39,6 @@ class SpaceInvaders:
             self._update_aliens()
             self._screen_update()
 
-            # Remove redundant bullets.
-            for bullet in self.bullets.copy():
-                if bullet.rect.bottom <= 0:
-                    self.bullets.remove(bullet)
             print(len(self.bullets))
 
     def _check_events(self):
@@ -129,7 +125,24 @@ class SpaceInvaders:
         self.aliens.update()
 
     def _update_bullets(self):
+        """ Updates bullets position, remove spent bullets"""
         self.bullets.update()
+        for bullet in self.bullets.copy():
+            if bullet.rect.bottom <= 0:
+                self.bullets.remove(bullet)
+        self._check_bullet_alien_collisions()
+
+
+    def _check_bullet_alien_collisions(self):
+        """Respond to bullet and alien collision"""
+        # Checks for hits and removes aliens.
+        collision = pygame.sprite.groupcollide(self.bullets, self.aliens, True, True)
+        if collision:
+            self.sfx.play_explosion_sound()
+        if not self.aliens:
+            # Eradicate existing bullets and repopulate the fleet.
+            self.bullets.empty()
+            self._create_fleet()
 
     def _change_fleet_direction(self):
         """Drop the entire fleet and change the fleet direction"""

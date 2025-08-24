@@ -10,7 +10,7 @@ class Settings:
         self.ship_sprite = 'resources/images/space_ship.png'
 
         # Bullet settings
-        self.bullet_speed = 1.0
+        self.bullet_speed = 4
         self.bullet_width = 3
         self.bullet_height = 15
         self.bullet_color = (149, 255, 0)
