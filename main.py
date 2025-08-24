@@ -35,7 +35,8 @@ class SpaceInvaders:
         while True:
             self._check_events()
             self.ship.update()
-            self.bullets.update()
+            self._update_bullets()
+            self._update_aliens()
             self._screen_update()
 
             # Remove redundant bullets.
@@ -122,6 +123,26 @@ class SpaceInvaders:
         alien.rect.y = alien.rect.height + 2 * alien.rect.height * row_number
         self.aliens.add(alien)
 
+    def _update_aliens(self):
+        """Checks fleet position and performs update"""
+        self._check_fleet_edges()
+        self.aliens.update()
+
+    def _update_bullets(self):
+        self.bullets.update()
+
+    def _change_fleet_direction(self):
+        """Drop the entire fleet and change the fleet direction"""
+        for alien in self.aliens.sprites():
+            alien.rect.y += self.settings.fleet_drop_speed
+        self.settings.fleet_direction *= -1
+
+    def _check_fleet_edges(self):
+        """Responsive to the edges fleet"""
+        for alien in self.aliens.sprites():
+            if alien.check_edges():
+                self._change_fleet_direction()
+                break
 
 if __name__ == '__main__':
     # Make a game instance, and run the game
