@@ -1,6 +1,8 @@
 import sys
 import pygame
+from time import sleep
 from settings import Settings
+from stats import GameStats
 from ship import Ship
 from bullet import Bullet
 from sfx import Sound_Manager
@@ -12,12 +14,12 @@ class SpaceInvaders:
     def __init__(self):
         """Initialize the game and create resources"""
         pygame.init()
-
         self.settings = Settings()
         self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
         self.settings.screen_width = self.screen.get_rect().width
         self.settings.screen_height = self.screen.get_rect().height
         pygame.display.set_caption("Space Invaders")
+        self.stats = GameStats(self)
         self.background = pygame.image.load(self.settings.bg_art).convert()
         self.ship = Ship(self)
         self.bullets = pygame.sprite.Group()
@@ -34,9 +36,10 @@ class SpaceInvaders:
 
         while True:
             self._check_events()
-            self.ship.update()
-            self._update_bullets()
-            self._update_aliens()
+            if self.stats.game_active:
+                self.ship.update()
+                self._update_bullets()
+                self._update_aliens()
             self._screen_update()
 
             print(len(self.bullets))
@@ -124,6 +127,13 @@ class SpaceInvaders:
         self._check_fleet_edges()
         self.aliens.update()
 
+        # Checks for alien-ship collision.
+        if pygame.sprite.spritecollideany(self.ship, self.aliens):
+            print("GAME OVER")
+
+        # Checks if alien hit bottom.
+        self._hostile_reach_bottom()
+
     def _update_bullets(self):
         """ Updates bullets position, remove spent bullets"""
         self.bullets.update()
@@ -156,6 +166,30 @@ class SpaceInvaders:
             if alien.check_edges():
                 self._change_fleet_direction()
                 break
+
+    def _ship_hit(self):
+        """Responds to ship being hit by hostiles"""
+        if self.stats.ships_left > 0:
+            self.stats.ships_left -= 1
+
+            self.aliens.empty()
+            self.bullets.empty()
+            self._create_fleet()
+            self.ship.centre_ship()
+            #Pause
+            sleep(0.5)
+        else:
+            self.stats.game_active = False
+
+    def _hostile_reach_bottom(self):
+        """Checks if any from the fleet reached bottom"""
+        screen_rect = self.screen.get_rect()
+        for alien in self.aliens.sprites():
+            if alien.rect.bottom >= screen_rect.bottom:
+                # Treat this the same as _ship_hit
+                self._ship_hit()
+                break
+
 
 if __name__ == '__main__':
     # Make a game instance, and run the game
