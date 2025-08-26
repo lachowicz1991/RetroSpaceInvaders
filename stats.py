@@ -8,7 +8,7 @@ class GameStats:
         self.setings = si_game.settings
         self.reset_stats()
         # Start game with active state
-        self.game_active = True
+        self.game_active = False
 
     def reset_stats(self):
         """Initialize stats that can change during the game"""

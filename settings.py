@@ -8,7 +8,7 @@ class Settings:
         # Ship Settings
         self.ship_speed = 1.5
         self.ship_sprite = 'resources/images/space_ship.png'
-        self.ship_limit = 3
+        self.ship_limit = 1
 
 
         # Bullet settings
@@ -20,7 +20,7 @@ class Settings:
 
         # Alien settings
         self.alien_speed = 1.0
-        self.fleet_drop_speed = 50
+        self.fleet_drop_speed = 100
         # fleet_direction of 1 represents right, -1 left.
         self.fleet_direction = 1
 

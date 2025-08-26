@@ -7,6 +7,7 @@ from ship import Ship
 from bullet import Bullet
 from sfx import Sound_Manager
 from alien import Alien
+from button import Button
 
 class SpaceInvaders:
     """Main class for the game"""
@@ -26,6 +27,7 @@ class SpaceInvaders:
         self.aliens = pygame.sprite.Group()
         self._create_fleet()
         self.sfx = Sound_Manager(self)
+        self.play_button = Button(self, "Play")
 
     def run_game(self):
         """Start the main loop of the game."""
@@ -40,6 +42,7 @@ class SpaceInvaders:
                 self.ship.update()
                 self._update_bullets()
                 self._update_aliens()
+
             self._screen_update()
 
             print(len(self.bullets))
@@ -49,11 +52,33 @@ class SpaceInvaders:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
+
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_position = pygame.mouse.get_pos()
+                self._check_play_button(mouse_position)
             elif event.type == pygame.KEYDOWN:
                 self._check_keydown_events(event)
 
             elif event.type == pygame.KEYUP:
                 self._check_keyup_events(event)
+
+    def _check_play_button(self, mouse_pos):
+        """Start a new game when the player clicks Play."""
+        button_clicked = self.play_button.rect.collidepoint(mouse_pos)
+        if button_clicked and not self.stats.game_active:
+            # Reset the game statistics.
+            self.stats.game_active = True
+            self.stats.reset_stats()
+
+            # Removes remaining hostiles and bullets.
+            self.aliens.empty()
+            self.bullets.empty()
+
+            # Create a new fleet and center the ship
+            self._create_fleet()
+            self.ship.centre_ship()
+            # Hide the mouse cursor.
+            pygame.mouse.set_visible(False)
 
     def _check_keydown_events(self, event):
         """Handles key presses"""
@@ -109,7 +134,13 @@ class SpaceInvaders:
         for bullet in self.bullets.sprites():
             bullet.draw_bullet()
 
+        # Renders alien to the screen
         self.aliens.draw(self.screen)
+
+        #Renders button to the screen
+        if not self.stats.game_active:
+            self.play_button.draw_button()
+
         # Make the most recently drawn screen visible.
         pygame.display.flip()
 
@@ -178,8 +209,10 @@ class SpaceInvaders:
             self.ship.centre_ship()
             #Pause
             sleep(0.5)
+
         else:
             self.stats.game_active = False
+            pygame.mouse.set_visible(True)
 
     def _hostile_reach_bottom(self):
         """Checks if any from the fleet reached bottom"""
