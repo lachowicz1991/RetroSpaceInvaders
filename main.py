@@ -67,6 +67,7 @@ class SpaceInvaders:
         button_clicked = self.play_button.rect.collidepoint(mouse_pos)
         if button_clicked and not self.stats.game_active:
             # Reset the game statistics.
+            self.settings.increase_speed()
             self.stats.game_active = True
             self.stats.reset_stats()
 
@@ -173,7 +174,6 @@ class SpaceInvaders:
                 self.bullets.remove(bullet)
         self._check_bullet_alien_collisions()
 
-
     def _check_bullet_alien_collisions(self):
         """Respond to bullet and alien collision"""
         # Checks for hits and removes aliens.
@@ -184,6 +184,7 @@ class SpaceInvaders:
             # Eradicate existing bullets and repopulate the fleet.
             self.bullets.empty()
             self._create_fleet()
+            self.settings.increase_speed()
 
     def _change_fleet_direction(self):
         """Drop the entire fleet and change the fleet direction"""
