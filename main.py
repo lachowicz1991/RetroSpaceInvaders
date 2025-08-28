@@ -3,6 +3,7 @@ import pygame
 from time import sleep
 from settings import Settings
 from stats import GameStats
+from scoreboard import Scoreboard
 from ship import Ship
 from bullet import Bullet
 from sfx import Sound_Manager
@@ -21,6 +22,7 @@ class SpaceInvaders:
         self.settings.screen_height = self.screen.get_rect().height
         pygame.display.set_caption("Space Invaders")
         self.stats = GameStats(self)
+        self.sb = Scoreboard(self)
         self.background = pygame.image.load(self.settings.bg_art).convert()
         self.ship = Ship(self)
         self.bullets = pygame.sprite.Group()
@@ -69,6 +71,7 @@ class SpaceInvaders:
             # Reset the game statistics.
             self.settings.increase_speed()
             self.stats.game_active = True
+            self.sb.prep_score()
             self.stats.reset_stats()
 
             # Removes remaining hostiles and bullets.
@@ -138,6 +141,9 @@ class SpaceInvaders:
         # Renders alien to the screen
         self.aliens.draw(self.screen)
 
+        # Renders scoreboard on the screen
+        self.sb.show_score()
+
         #Renders button to the screen
         if not self.stats.game_active:
             self.play_button.draw_button()
@@ -180,6 +186,11 @@ class SpaceInvaders:
         collision = pygame.sprite.groupcollide(self.bullets, self.aliens, True, True)
         if collision:
             self.sfx.play_explosion_sound()
+            self.sb.prep_score()
+            for aliens in collision.values():
+                self.stats.score += self.settings.alien_points * len(aliens)
+
+
         if not self.aliens:
             # Eradicate existing bullets and repopulate the fleet.
             self.bullets.empty()
