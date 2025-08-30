@@ -8,7 +8,7 @@ class Settings:
         # Ship Settings
         self.ship_speed = 1.5
         self.ship_sprite = 'resources/images/space_ship.png'
-        self.ship_limit = 1
+        self.ship_limit = 3
 
 
         # Bullet settings
@@ -20,12 +20,14 @@ class Settings:
 
         # Alien settings
         self.alien_speed = 1.0
-        self.fleet_drop_speed = 100
+        self.fleet_drop_speed = 10
         # fleet_direction of 1 represents right, -1 left.
         self.fleet_direction = 1
 
         # How fast the game speeds up
         self.speedup_scale = 1.1
+
+        self.score_scale = 1.5
 
         self.initialize_dynamic_setting()
 
@@ -47,5 +49,7 @@ class Settings:
         self.bullet_speed *= self.speedup_scale
         self.alien_speed *= self.speedup_scale
 
+        self.alien_points = int(self.alien_points * self.score_scale)
+        print(self.alien_points)
 
 
