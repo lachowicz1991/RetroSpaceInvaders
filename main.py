@@ -72,6 +72,8 @@ class SpaceInvaders:
             self.settings.increase_speed()
             self.stats.game_active = True
             self.sb.prep_score()
+            self.sb.prep_level()
+            self.sb.prep_ships()
             self.stats.reset_stats()
 
             # Removes remaining hostiles and bullets.
@@ -197,6 +199,10 @@ class SpaceInvaders:
             self._create_fleet()
             self.settings.increase_speed()
 
+            # Increase level
+            self.stats.level += 1
+            self.sb.prep_level()
+
     def _change_fleet_direction(self):
         """Drop the entire fleet and change the fleet direction"""
         for alien in self.aliens.sprites():
@@ -214,6 +220,7 @@ class SpaceInvaders:
         """Responds to ship being hit by hostiles"""
         if self.stats.ships_left > 0:
             self.stats.ships_left -= 1
+            self.sb.prep_ships()
 
             self.aliens.empty()
             self.bullets.empty()
